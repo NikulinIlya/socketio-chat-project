@@ -7,7 +7,10 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    console.log('a user connected');
+    // console.log('a user connected');
+    // console.log(Object.keys(io.sockets.connected).length);
+
+    io.emit('connections', Object.keys(io.sockets.connected).length);
 
     socket.on('disconnect', () => {
         console.log('Disconnected')
