@@ -1,0 +1,8 @@
+{
+  "name": "socketio-proj",
+  "version": "1.0.0",
+  "description": "socket.io app project",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {}
+}
