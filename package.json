@@ -4,5 +4,7 @@
   "description": "socket.io app project",
   "main": "index.js",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "express": "4.15.2"
+  }
 }
