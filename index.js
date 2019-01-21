@@ -21,6 +21,16 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('chat-message', (data))
 
     })
+
+    socket.on('typing', (data) => {
+        socket.broadcast.emit('typing', (data))
+
+    })
+
+    socket.on('stopTyping', (data) => {
+        socket.broadcast.emit('stopTyping', (data))
+
+    })
 });
 
 http.listen(3000, () => {

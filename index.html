@@ -12,13 +12,24 @@
     <div id="app">
         <div class="container">
             <div class="col-lg-6 offset-lg-3">
-                <div class="card bg-info">
+                <div v-if="!ready">
+                    <h4>Set your name</h4>
+                    <form @submit.prevent="addName">
+                        <div class="form-group row">
+                            <input type="text" class="form-control col-9" v-model="name" placeholder="Give your name">
+                            <input type="submit" value="Add" class="btn btn-sm btn-info ml-1">
+                        </div>
+                    </form>
+                </div>
+                <h1 v-else="ready">{{ name }}</h1>
+                <div class="card bg-info" v-if="ready">
                     <div class="card-header text-white">
                         Chat App
                     </div>
-                    <ul class="list-group list-group-flush">
+                    <ul class="list-group list-group-flush text-right">
+                        <small v-if="typing" class="text-white">User is typing</small>
                         <li class="list-group-item" v-for="message in messages">
-                            {{ message }}
+                            <span :class="{'float-left':message.type === 1}">{{ message.message }}</span>
                         </li>
                     </ul>
 
@@ -42,23 +53,42 @@
             el: '#app',
             data: {
                 newmessage: null,
-                messages: []
+                messages: [],
+                typing: false,
+                name: null,
+                ready: false
+            },
+            watch: {
+                newmessage(value) {
+                    value ? socket.emit('typing') : socket.emit('stopTyping')
+                }
             },
             methods: {
                 send() {
-                    this.messages.push(this.newmessage);
+                    this.messages.push({message: this.newmessage, type: 0});
                     socket.emit('chat-message', this.newmessage);
                     this.newmessage = null
+                },
+                addName() {
+                    this.ready = true
                 }
             },
             created() {
                 socket.emit('Created', 'message')
                 socket.on('Created', (data) => {
                     console.log(data)
-                })
+                });
 
                 socket.on('chat-message', (data) => {
-                    this.messages.push(data)
+                    this.messages.push({message: data, type: 1})
+                });
+
+                socket.on('typing', () => {
+                    this.typing = true
+                });
+
+                socket.on('stopTyping', () => {
+                    this.typing = false
                 })
             }
         })
