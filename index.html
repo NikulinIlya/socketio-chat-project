@@ -11,7 +11,26 @@
 <body>
     <div id="app">
         <div class="container">
+            <div class="col-lg-6 offset-lg-3">
+                <div class="card bg-info">
+                    <div class="card-header text-white">
+                        Chat App
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" v-for="message in messages">
+                            {{ message }}
+                        </li>
+                    </ul>
 
+                    <div class="card-body">
+                        <form @submit.prevent="send">
+                            <div class="form-group">
+                                <input type="text" class="form-control" v-model="newmessage" placeholder="Type Here">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -21,8 +40,26 @@
         let socket = io();
         let app = new Vue({
             el: '#app',
+            data: {
+                newmessage: null,
+                messages: []
+            },
+            methods: {
+                send() {
+                    this.messages.push(this.newmessage);
+                    socket.emit('chat-message', this.newmessage);
+                    this.newmessage = null
+                }
+            },
             created() {
-                console.log('Created')
+                socket.emit('Created', 'message')
+                socket.on('Created', (data) => {
+                    console.log(data)
+                })
+
+                socket.on('chat-message', (data) => {
+                    this.messages.push(data)
+                })
             }
         })
 </script>
